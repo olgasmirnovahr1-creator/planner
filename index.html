@@ -843,6 +843,8 @@
       .app { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -937,6 +939,33 @@
 </div>
 
 <script>
+  // ── Firebase ──────────────────────────────────────────
+  firebase.initializeApp({
+    apiKey: "AIzaSyC266hTrA1sWvoJjvquQxMFdRErZJvoUuY",
+    authDomain: "planner-e80d3.firebaseapp.com",
+    projectId: "planner-e80d3",
+    storageBucket: "planner-e80d3.firebasestorage.app",
+    messagingSenderId: "787904417858",
+    appId: "1:787904417858:web:f8c8957e2e2d90a3cfdddb"
+  });
+  const db = firebase.firestore();
+  const plannerDoc = db.collection('planner').doc('shared');
+
+  let syncTimer = null;
+  function scheduleSync() {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      plannerDoc.set({
+        tasks,
+        priorities,
+        events: spanEvents,
+        recurring: recurringTasks,
+        inbox: inboxTasks
+      }).catch(e => console.error('Firestore sync error:', e));
+    }, 600);
+  }
+  // ──────────────────────────────────────────────────────
+
   const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь',
                   'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
   const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня',
@@ -955,11 +984,11 @@
   let recurringTasks = JSON.parse(localStorage.getItem('planner_recurring') || '[]');
   let inboxTasks = JSON.parse(localStorage.getItem('planner_inbox') || '[]');
 
-  function save()          { localStorage.setItem('planner', JSON.stringify(tasks)); }
-  function savePriorities(){ localStorage.setItem('planner_priorities', JSON.stringify(priorities)); }
-  function saveEvents()    { localStorage.setItem('planner_events', JSON.stringify(spanEvents)); }
-  function saveRecurring() { localStorage.setItem('planner_recurring', JSON.stringify(recurringTasks)); }
-  function saveInbox()     { localStorage.setItem('planner_inbox', JSON.stringify(inboxTasks)); }
+  function save()          { localStorage.setItem('planner', JSON.stringify(tasks)); scheduleSync(); }
+  function savePriorities(){ localStorage.setItem('planner_priorities', JSON.stringify(priorities)); scheduleSync(); }
+  function saveEvents()    { localStorage.setItem('planner_events', JSON.stringify(spanEvents)); scheduleSync(); }
+  function saveRecurring() { localStorage.setItem('planner_recurring', JSON.stringify(recurringTasks)); scheduleSync(); }
+  function saveInbox()     { localStorage.setItem('planner_inbox', JSON.stringify(inboxTasks)); scheduleSync(); }
 
   const EV_BG = ['#dbeafe','#d1fae5','#fef3c7','#ede9fe','#ffedd5','#fce7f3'];
 
@@ -1811,6 +1840,25 @@
 
   // Select today on load
   selected = todayStr();
+
+  // Firestore: загрузка и real-time синхронизация
+  plannerDoc.onSnapshot({ includeMetadataChanges: true }, snap => {
+    if (!snap.exists) return;
+    if (snap.metadata.hasPendingWrites) return; // пропускаем свои же записи
+    const d = snap.data();
+    tasks          = d.tasks      || [];
+    priorities     = d.priorities || {};
+    spanEvents     = d.events     || [];
+    recurringTasks = d.recurring  || [];
+    inboxTasks     = d.inbox      || [];
+    localStorage.setItem('planner',            JSON.stringify(tasks));
+    localStorage.setItem('planner_priorities', JSON.stringify(priorities));
+    localStorage.setItem('planner_events',     JSON.stringify(spanEvents));
+    localStorage.setItem('planner_recurring',  JSON.stringify(recurringTasks));
+    localStorage.setItem('planner_inbox',      JSON.stringify(inboxTasks));
+    renderAll();
+  });
+
   renderAll();
 </script>
 </body>
