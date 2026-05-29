@@ -844,6 +844,7 @@
     }
 
     @media (max-width: 767px) {
+      /* Задачи в ячейках — цветные точки */
       .cell-tasks {
         flex-direction: row;
         flex-wrap: wrap;
@@ -864,6 +865,13 @@
       .cell-task .cell-del,
       .cell-task-txt { display: none; }
       .cell-more { display: none; }
+
+      /* Скрываем приоритеты */
+      .priority-slots { display: none; }
+
+      /* Заголовок: nav + панель дня (без приоритетов) */
+      .cal-header { grid-template-columns: auto 1fr; }
+      .cal-day-panel { padding: 8px 14px 10px; }
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1589,7 +1597,7 @@
     const title = document.getElementById('dayTitle');
     const list  = document.getElementById('tasksList');
 
-    const panelDate = todayStr();
+    const panelDate = window.innerWidth < 768 ? (selected || todayStr()) : todayStr();
     const [y, m, d] = panelDate.split('-').map(Number);
     const date = new Date(y, m-1, d);
     title.textContent = DAYS[date.getDay()] + ', ' + d + ' ' + MONTHS_GEN[m-1];
