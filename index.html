@@ -845,12 +845,15 @@
 
     @media (max-width: 767px) {
       /* Задачи в ячейках — цветные точки */
-      .cell-tasks { flex-direction: row; flex-wrap: wrap; gap: 2px; margin-top: 4px; width: auto; }
+      .cell-tasks { flex-direction: row; flex-wrap: wrap; gap: 3px; margin-top: 5px; width: 100%; justify-content: center; }
       .cell-task {
-        width: 7px !important; height: 7px !important;
+        width: 9px !important; height: 9px !important;
         padding: 0 !important; border-radius: 50% !important;
         flex-shrink: 0; gap: 0; cursor: pointer;
       }
+      .cell-task.done    { background: #4caf50 !important; }
+      .cell-task.overdue { background: #e85555 !important; }
+      .cell-task.pending { background: #aaa !important; }
       .cell-task .cell-cb,
       .cell-task .cell-del,
       .cell-task-txt { display: none; }
