@@ -839,8 +839,43 @@
 
     /* Responsive */
     @media (max-width: 800px) {
-      header { padding: 20px 16px 0; }
-      .app { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
+      .app { grid-template-columns: 1fr; padding: 10px; gap: 12px; }
+
+      /* Заголовок календаря — в столбик */
+      .cal-header { grid-template-columns: 1fr; }
+      .priority-slots {
+        border-left: none;
+        border-top: 1px solid #ece9e2;
+        padding: 8px 16px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .p-slot { font-size: 12px; }
+      .cal-day-panel {
+        border-left: none;
+        border-top: 1px solid #ece9e2;
+        padding: 10px 16px 14px;
+      }
+
+      /* Ячейки дней — компактнее */
+      .day-cell { padding: 4px 3px 3px; min-height: 50px; }
+      .day-num { width: 24px; height: 24px; font-size: 13px; }
+
+      /* Задачи — цветные полоски без текста */
+      .cell-tasks { gap: 1px; margin-top: 3px; }
+      .cell-task {
+        padding: 3px 0;
+        border-radius: 3px;
+        gap: 0;
+        min-height: 5px;
+      }
+      .cell-task .cell-cb,
+      .cell-task .cell-del { display: none; }
+      .cell-task-txt { display: none; }
+
+      /* Задачи дня — нормальный размер */
+      .tasks { grid-template-columns: 1fr; }
     }
   </style>
 </head>
