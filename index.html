@@ -842,6 +842,29 @@
       header { padding: 20px 16px 0; }
       .app { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
     }
+
+    @media (max-width: 767px) {
+      .cell-tasks {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 2px;
+        margin-top: 4px;
+        width: auto;
+      }
+      .cell-task {
+        width: 7px !important;
+        height: 7px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        flex-shrink: 0;
+        gap: 0;
+        cursor: pointer;
+      }
+      .cell-task .cell-cb,
+      .cell-task .cell-del,
+      .cell-task-txt { display: none; }
+      .cell-more { display: none; }
+    }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
